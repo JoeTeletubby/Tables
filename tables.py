@@ -1,6 +1,6 @@
 import texttable
 
-version = "1.1.0"
+version = "1.2.0"
 
 class MultipleInstancesError(Exception):
     pass
@@ -35,6 +35,20 @@ class Table:
         for x in self.table:
             if list(x.values())[0] == firstValue:
                 del self.table[self.table.index(x)]
+
+    def change(self, firstValue, newValues):
+        for x in self.table:
+            if list(x.values())[0] == firstValue:
+                self.table[self.table.index(x)] = self.format(newValues)
+                return True
+        return False
+
+    def format(self, values):
+        toReturn = {}
+        for i in range(0, self.col_a):
+            head = self.heads[i]
+            toReturn[head] = values[i]
+        return toReturn
 
     def __str__(self):
         table = texttable.Texttable()
