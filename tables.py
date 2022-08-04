@@ -1,4 +1,9 @@
-version = "1.0.0"
+import texttable
+
+version = "1.1.0"
+
+class MultipleInstancesError(Exception):
+    pass
 
 class Table:
     def __init__(self, title, columns, headers):
@@ -12,20 +17,31 @@ class Table:
         for i in range(0, self.col_a):
             head = self.heads[i]
             toAppend[head] = values[i]
+        if self.check(values[0]):
+            pass
+        else:
+            raise MultipleInstancesError
         self.table.append(toAppend)
     
-    def __str__(self):
-        string = "Table: " + str(self.title) + "\nColumns: "
-        for x in self.heads:
-            string += str(x) + ", " if x != self.heads[-1] else str(x)
-        string += "\n\n"
+    def check(self, firstValue):
+        vals = []
         for x in self.table:
-            vals = []
-            for v in x.values():
-                vals.append(str(v))
-            string += ", ".join(vals)
-            string += "\n"
-        return string
+            vals.append(list(x.values())[0])
+        if firstValue in vals:
+            return False
+        return True
+
+    def delete(self, firstValue):
+        for x in self.table:
+            if list(x.values())[0] == firstValue:
+                del self.table[self.table.index(x)]
+
+    def __str__(self):
+        table = texttable.Texttable()
+        table.header(self.heads)
+        for x in self.table:
+            table.add_row(x.values())
+        return table.draw()
     
     def __repr__(self):
         return f"<Table: {self.title} with values {self.table}>"
